@@ -2,6 +2,10 @@
 //
 //    -- differentiate between done and deleted tasks
 //    -- move item to top at a future date
+//
+//
+//   javac Todo.java
+//   java Todo
 
 import java.awt.*;
 import java.awt.event.*;
@@ -23,7 +27,6 @@ public class Todo {
 	Todo  todo = new Todo();
 	todo.load();
 	todo.run();
-            }});
     }
     private void prepareGUI(){
 	mainFrame = new JFrame();
@@ -70,22 +73,14 @@ public class Todo {
 	taskField.setMaximumSize(new Dimension(600,24));
 	controlPanel.add(taskField);
 
-	JButton removeButton = new JButton("Remove");
-	removeButton.addActionListener(new ActionListener() {
+	JButton doneButton = new JButton("Done");
+	doneButton.addActionListener(new ActionListener() {
 		public void actionPerformed(ActionEvent e) { 
-		    if (todoList.getSize() > 0) {
-		       int taskIndex = todoJList.getSelectedIndex();
-		       todoList.remove(taskIndex);
-		       save();
-		       if (taskIndex  < todoList.getSize()) {
-			   todoJList.setSelectedIndex(taskIndex);
-		       } else if (todoList.getSize() > 0) {
-			   todoJList.setSelectedIndex(todoList.getSize() - 1);
-		       }
-		    }
+		    String s = remove_selected();
+		    record_done(s);
 		}
 	    });
-	controlPanel.add(removeButton);
+	controlPanel.add(doneButton);
 
 	JButton topButton = new JButton("Top");
 	topButton.addActionListener(new ActionListener() {
@@ -104,7 +99,24 @@ public class Todo {
 	    });
 	controlPanel.add(topButton);
 
-	JButton downButton = new JButton("Down");
+	JButton upButton = new JButton("Up");
+	upButton.addActionListener(new ActionListener() {
+		public void actionPerformed(ActionEvent e) {
+		    if (todoJList.getSelectedIndex() > 0) {
+		       Object task = todoJList.getSelectedValue();
+		       if (task instanceof String) {
+			  int taskIndex = todoJList.getSelectedIndex();
+			  todoList.remove(taskIndex);
+			  todoList.add(taskIndex-1, task);
+			  todoJList.setSelectedIndex(taskIndex-1);
+			  save();
+		       }
+		    }
+		}
+	    });
+	controlPanel.add(upButton);
+	
+        JButton downButton = new JButton("Down");
 	downButton.addActionListener(new ActionListener() {
 		public void actionPerformed(ActionEvent e) {
 		    if ((todoList.getSize() > 0)
@@ -123,23 +135,14 @@ public class Todo {
 	    });
 	controlPanel.add(downButton);
 
-	JButton upButton = new JButton("Up");
-	upButton.addActionListener(new ActionListener() {
-		public void actionPerformed(ActionEvent e) {
-		    if (todoJList.getSelectedIndex() > 0) {
-		       Object task = todoJList.getSelectedValue();
-		       if (task instanceof String) {
-			  int taskIndex = todoJList.getSelectedIndex();
-			  todoList.remove(taskIndex);
-			  todoList.add(taskIndex-1, task);
-			  todoJList.setSelectedIndex(taskIndex-1);
-			  save();
-		       }
-		    }
+	JButton deleteButton = new JButton("Delete");
+	deleteButton.addActionListener(new ActionListener() {
+		public void actionPerformed(ActionEvent e) { 
+		    remove_selected();
 		}
 	    });
-	controlPanel.add(upButton);
-	
+	controlPanel.add(deleteButton);
+
 	mainFrame.setVisible(true);             
     }
     // Loads items from the file and inserts them at the end of the list
@@ -170,6 +173,33 @@ public class Todo {
 	      
 	  }
 	  writer.close();
+	} catch (Exception e) {
+	}
+    }
+    private String remove_selected() {
+       if (todoList.getSize() > 0) {
+	  Object task = todoJList.getSelectedValue();
+	  int taskIndex = todoJList.getSelectedIndex();
+	  todoList.remove(taskIndex);
+	  save();
+	  if (taskIndex  < todoList.getSize()) {
+	      todoJList.setSelectedIndex(taskIndex);
+	  } else if (todoList.getSize() > 0) {
+	      todoJList.setSelectedIndex(todoList.getSize() - 1);
+	  }
+	  return (String) task;
+       } else {
+	  return "";
+       }
+    }
+    private void record_done(String s) {
+	try {
+	    // The "true" means to open in append mode
+	    FileWriter fout = new FileWriter("/Users/phil/src/todo/done.txt",
+					     true);
+	    BufferedWriter writer = new BufferedWriter(fout);
+	    writer.write(s + "\n");
+	    writer.close();
 	} catch (Exception e) {
 	}
     }
