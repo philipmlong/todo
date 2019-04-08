@@ -1,6 +1,5 @@
 // Todo:
 //
-//    -- differentiate between done and deleted tasks
 //    -- move item to top at a future date
 //
 //
@@ -18,8 +17,10 @@ public class Todo {
     private JPanel controlPanel;
     final DefaultListModel todoList = new DefaultListModel();
     JList todoJList = new JList(todoList);
-    JScrollPane todoPane = new JScrollPane(todoJList);    
-   
+    JScrollPane todoPane = new JScrollPane(todoJList);
+
+    String DIRECTORY = "/usr/local/google/home/plong/src/todo/";
+
     public Todo(){
 	prepareGUI();
     }
@@ -148,7 +149,7 @@ public class Todo {
     // Loads items from the file and inserts them at the end of the list
     private void load() {
 	try {
-	  FileReader fin = new FileReader("/Users/phil/src/todo/todo.txt");
+	  FileReader fin = new FileReader(DIRECTORY + "todo.txt");
 	  BufferedReader reader = new BufferedReader(fin);
 	  String line = reader.readLine();
 	  while (line != null) {
@@ -164,7 +165,7 @@ public class Todo {
     }
     private void save() {
 	try {
-	  FileWriter fout = new FileWriter("/Users/phil/src/todo/todo.txt");
+	  FileWriter fout = new FileWriter(DIRECTORY + "todo.txt");
 	  BufferedWriter writer = new BufferedWriter(fout);
 	  for (int i = 0;
 	       i < todoList.getSize();
@@ -174,6 +175,7 @@ public class Todo {
 	  }
 	  writer.close();
 	} catch (Exception e) {
+	    e.printStackTrace();
 	}
     }
     private String remove_selected() {
@@ -195,12 +197,13 @@ public class Todo {
     private void record_done(String s) {
 	try {
 	    // The "true" means to open in append mode
-	    FileWriter fout = new FileWriter("/Users/phil/src/todo/done.txt",
+	    FileWriter fout = new FileWriter(DIRECTORY + "done.txt",
 					     true);
 	    BufferedWriter writer = new BufferedWriter(fout);
 	    writer.write(s + "\n");
 	    writer.close();
 	} catch (Exception e) {
+	    e.printStackTrace();
 	}
     }
 }
