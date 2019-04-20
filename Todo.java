@@ -19,7 +19,7 @@ public class Todo {
     JList todoJList = new JList(todoList);
     JScrollPane todoPane = new JScrollPane(todoJList);
 
-    String DIRECTORY = "/usr/local/google/home/plong/src/todo/";
+    String DIRECTORY = "/Users/phil/src/todo/";
 
     public Todo(){
 	prepareGUI();
@@ -52,7 +52,7 @@ public class Todo {
 	controlPanel.setLayout(new BoxLayout(controlPanel,
 					     BoxLayout.Y_AXIS));
 
-	mainFrame.add(todoPane);
+	mainFrame.add(todoPane); 
 	mainFrame.add(controlPanel);
 	/*   The following line would make the window was small as possible.
 		
@@ -66,9 +66,11 @@ public class Todo {
 	taskField.addActionListener(new ActionListener() {
 		public void actionPerformed(ActionEvent e) { 
 		    String taskString = taskField.getText();
-		    todoList.add(0, taskString);
-		    taskField.setText("");
-		    todoJList.setSelectedIndex(0);
+		    if (!("".equals(taskString))) {
+		      todoList.add(0, taskString);
+		      taskField.setText("");
+		      todoJList.setSelectedIndex(0);
+		    }
 		}
 	    });
 	taskField.setMaximumSize(new Dimension(600,24));
