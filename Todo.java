@@ -19,7 +19,8 @@ public class Todo {
     JList todoJList = new JList(todoList);
     JScrollPane todoPane = new JScrollPane(todoJList);
 
-    String DIRECTORY = "/Users/phil/src/todo/";
+    //    String DIRECTORY = "/Users/phil/src/todo/";
+    String DIRECTORY = "/usr/local/google/home/plong/src/todo/";
 
     public Todo(){
 	prepareGUI();
@@ -138,10 +139,13 @@ public class Todo {
 	    });
 	controlPanel.add(downButton);
 
+	controlPanel.add(Box.createVerticalStrut(50));
+
 	JButton deleteButton = new JButton("Delete");
 	deleteButton.addActionListener(new ActionListener() {
 		public void actionPerformed(ActionEvent e) { 
-		    remove_selected();
+		    String s = remove_selected();
+		    record_deleted(s);
 		}
 	    });
 	controlPanel.add(deleteButton);
@@ -200,6 +204,18 @@ public class Todo {
 	try {
 	    // The "true" means to open in append mode
 	    FileWriter fout = new FileWriter(DIRECTORY + "done.txt",
+					     true);
+	    BufferedWriter writer = new BufferedWriter(fout);
+	    writer.write(s + "\n");
+	    writer.close();
+	} catch (Exception e) {
+	    e.printStackTrace();
+	}
+    }
+    private void record_deleted(String s) {
+	try {
+	    // The "true" means to open in append mode
+	    FileWriter fout = new FileWriter(DIRECTORY + "deleted.txt",
 					     true);
 	    BufferedWriter writer = new BufferedWriter(fout);
 	    writer.write(s + "\n");
